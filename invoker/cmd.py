@@ -2,15 +2,15 @@
 
 import importlib
 import logging
-import sys
 import os
+import sys
 from argparse import ArgumentParser
 from pathlib import Path
 from typing import Callable
 
 import yaml
 
-from invoker import InvokerContext
+from invoker.utils import split_qualified_name
 
 LOGGER = logging.getLogger(__name__)
 
@@ -22,6 +22,7 @@ def define_args_parser() -> ArgumentParser:
     parser.add_argument('log_config', help='specify logging.yaml path', type=Path)
     parser.add_argument('invoke_options', help='specify invoke.yaml path')
     parser.add_argument('--config', help='specify configuration.yaml path', type=Path, action='append')
+    parser.add_argument('--invoke_context_class', help='specify InvokerContext subclass.', type=str, default='invoker.InvokerContext')
 
     return parser
 
@@ -31,28 +32,16 @@ def execute():
     parser = define_args_parser()  # type* ArgumentParser
     args = parser.parse_args()
 
-    invoker = InvokerContext(args.config, args.log_config)
+    _package, _callable = split_qualified_name(args.invoke_context_class)
+    _InvokerClass = getattr(importlib.import_module(_package), _callable)  # type: Callable
 
     with Path(args.invoke_options).open('r', encoding='utf-8') as f:
         invoke_options = yaml.load(f)
 
-    qualified_token = invoke_options['invoke'].split('.')  # type: str
-    _package = '.'.join(qualified_token[:-1])
-    _callable = qualified_token[-1]
+    invoker = _InvokerClass(args.config, args.log_config)
+    ret = invoker.invoke(invoke_options)
 
-    LOGGER.debug('cwd: %s', os.getcwd())
-    sys.path.append(os.getcwd())
-    LOGGER.debug('sys.path: \n %s', '\n '.join(sys.path))
-    LOGGER.info('calleble: %s, package: %s', _callable, _package)
-
-    _func = getattr(importlib.import_module(_package), _callable)  # type: Callable
-
-    kwargs = invoke_options.get('args', {})
-    try:
-        ret = invoker.invoke(_func, args=[], kwargs=kwargs)
-    except Exception as e:
-        LOGGER.exception('invoke function internal error.')
-        sys.exit(10)
+    LOGGER.info('invoke ret: %s', ret)
 
     sys.exit(0)
 

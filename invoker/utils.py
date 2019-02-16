@@ -3,13 +3,12 @@
 import logging
 import os
 import re
-from collections import UserDict, Mapping
+from collections import Mapping, UserDict
 from logging import Logger
 from pathlib import Path
 from typing import Callable, Dict, List, Tuple
 
 import yaml
-from injector import Binder, Injector, singleton
 
 LOGGER = logging.getLogger(__name__)
 
@@ -33,7 +32,7 @@ class AliasDict(UserDict):
             return cls(yaml.load(f), **kargs)
 
     def __init__(self, config: dict,
-                 replace_pattern: str='\${(.*)}',
+                 replace_pattern: str = '\${(.*)}',
                  suffix_handler={
                      'dir': lambda val: os.path.expanduser(val)
                  }):
@@ -90,3 +89,12 @@ class AliasDict(UserDict):
                 d[k] = u[k]
 
         return d
+
+
+def split_qualified_name(qualified_name: str):
+
+    qualified_token = qualified_name.split('.')  # type: str
+    _package = '.'.join(qualified_token[:-1])
+    _callable = qualified_token[-1]
+
+    return _package, _callable
