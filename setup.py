@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="invoker",
-    version="1.0.1",
+    version="1.0.2",
     author='636',
     author_email='zx6r.636a1@gmail.com',
     description='Invoker utility for DI(Injector) and context configuration.',
