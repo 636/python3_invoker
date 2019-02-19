@@ -15,6 +15,8 @@ LOGGER.setLevel(logging.DEBUG)
 
 class TestAliasDict(TestCase):
 
+    logger = LOGGER.getChild('TestAliasDict')
+
     def test_replace(self):
 
         config = AliasDict({
@@ -24,4 +26,5 @@ class TestAliasDict(TestCase):
             }
         })
 
+        self.logger.debug(config['test.concat'])
         self.assertEqual(config.get('test.concat'), 'aaa/bbb/ccc')

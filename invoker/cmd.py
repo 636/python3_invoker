@@ -21,7 +21,7 @@ def define_args_parser() -> ArgumentParser:
 
     parser.add_argument('log_config', help='specify logging.yaml path', type=Path)
     parser.add_argument('invoke_options', help='specify invoke.yaml path')
-    parser.add_argument('--config', help='specify configuration.yaml path', type=Path, action='append')
+    parser.add_argument('--config', help='specify configuration.yaml path', type=Path, action='append', default=[])
     parser.add_argument('--invoke_context_class', help='specify InvokerContext subclass.', type=str, default='invoker.InvokerContext')
 
     return parser

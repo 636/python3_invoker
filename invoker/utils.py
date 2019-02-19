@@ -64,7 +64,7 @@ class AliasDict(UserDict):
             return ret
         except KeyError:
             self.logger.error('Not found spec key:%s', keys)
-            return None
+            return default
 
     def __get(self, config, keys):
 
@@ -72,6 +72,13 @@ class AliasDict(UserDict):
             return config[keys[0]]
         else:
             return self.__get(config[keys[0]], keys[1:])
+
+    def __getitem__(self, key):
+        ret = self.get(key)
+        if ret is None:
+            raise KeyError()
+
+        return ret
 
     def update(self, u):
         if isinstance(u, AliasDict):

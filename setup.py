@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="invoker",
-    version="1.0.0",
+    version="1.0.1",
     description='',
     packages=find_packages(),
     install_requires=["injector==0.14.1", "pyyaml>=4.2b1"],

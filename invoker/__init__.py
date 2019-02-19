@@ -64,7 +64,7 @@ class InvokerContext():
     def _injector_bind(self, binder: Binder):
         binder.bind(InvokeConfig, to=self.app_config, scope=singleton)
 
-    def invoke(self, invoke_options: dict):
+    def invoke(self, invoke_options: Dict):
 
         self.invoke_options = invoke_options
         self.injector.binder.bind(InvokeOptions, to=self.invoke_options, scope=singleton)
